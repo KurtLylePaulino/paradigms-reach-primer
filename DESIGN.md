@@ -33,7 +33,14 @@ The layout uses a hairline top bar, far-left numbered rail, three large fully tr
 
 1. A red **Initiate Geneseed Briefing?** prompt fades in over the closed façade. First click starts the supplied four-second interface loop and types **PARADIGMS REACH** in red condensed type with a trimmed typing recording. Reduced-motion users see the title immediately.
 2. On the second click, the supplied door recording accompanies the red seam flare and splitting façade. The gate animation lasts 2.7 seconds to match the sound; the skyline and full-screen opening statement appear after the view clears.
-3. **ENTER THE PRIMER** fades the interface loop into the supplied background track. Each later Continue crossfades the scene and expands field notes once in sequence. Navigation and hover use quiet clips from the supplied button recording; an audio toggle mutes all sound. Reduced-motion users see each new state immediately.
+3. The skyline reveal fades the interface loop into the supplied background track. Each later Continue crossfades the scene and expands field notes once in sequence. Navigation and hover use quiet clips from the supplied button recording. Reduced-motion users see each new state immediately.
+
+## Audio control treatment
+
+- Purpose and context: players need immediate control of briefing audio without leaving the scene. The control stays visible from the first sound through the finale.
+- Tone: industrial control-room instrument, using the site's coal, scarlet, warm white, and mono labels.
+- Differentiator: an etched, cut-corner plate with a red status diode and narrow signal rail. The rail and numeric readout move together while the actual audio changes.
+- Constraints: one compact control across intro, chapter HUD, and finale; 80% default level; readable mute state; keyboard-operated range input; desktop and mobile layouts; reduced-motion support.
 
 ## Content rules
 

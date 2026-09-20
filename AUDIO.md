@@ -11,4 +11,4 @@ The original user-supplied MP3 files remain in `assets/`. Short PCM clips in `as
 | Click / navigation | `audio/click-1.wav` through `click-4.wav` | 0.17–0.70 s, 1.04–1.79 s, 3.35–3.68 s, 7.55–7.86 s of `Button Hover and Click…mp3` | Random variation, avoiding immediate repeats. |
 | Opener and primer music | `Extraction Action (Cyberpunk 2077 Soundtrack).mp3` | Full track | Starts silently on the second click for browser playback permission, then fades in with **THE WORLD IS ENDING** and loops throughout the primer. |
 
-The **AUDIO ON/OFF** control mutes every track. Music and interface loop levels are deliberately lower than individual interaction cues. Browsers permit sound only after a user gesture, which the initial **CLICK TO INITIATE** provides.
+The persistent **AUDIO ON/OFF** control mutes every track. The volume slider starts at 80%, lowering every track by 20% from its original mix, and stays available once audio begins, including on the closing screen. Music and interface loop levels remain lower than individual interaction cues. Browsers permit sound only after a user gesture, which the initial **CLICK TO INITIATE** provides.

@@ -145,7 +145,43 @@ body:not(.is-open) .scene-layer.is-active { transform: scale(1.065); }
 }
 .sound-toggle:hover { color: #fff; border-color: var(--red); }
 .sound-toggle[aria-pressed="false"] { color: #8c8886; }
-.sound-toggle--intro { position: absolute; z-index: 5; top: 27px; right: 38px; }
+
+.audio-dock {
+  position: fixed;
+  z-index: 30;
+  top: 17px;
+  right: 170px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 205px;
+  min-height: 38px;
+  padding: 4px 9px;
+  border: 1px solid rgba(228, 58, 54, .63);
+  background: linear-gradient(90deg, rgba(102, 18, 20, .8) 0 2px, rgba(5, 6, 8, .94) 2px);
+  box-shadow: inset 0 0 0 1px rgba(235, 233, 230, .05), 0 8px 28px rgba(0, 0, 0, .44);
+  clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 11px, 100% 100%, 0 100%);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-7px);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s, right .45s ease;
+}
+.audio-dock::before, .audio-dock::after { content: ""; position: absolute; height: 2px; background: var(--red); pointer-events: none; }
+.audio-dock::before { top: 0; left: 0; width: 31px; }
+.audio-dock::after { bottom: 0; right: 0; width: 15px; }
+body.has-audio .audio-dock { opacity: 1; visibility: visible; transform: translateY(0); }
+body:not(.is-open) .audio-dock, body.is-finale .audio-dock { right: 27px; }
+.audio-dock .sound-toggle { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; padding: 6px 2px; border: 0; background: transparent; }
+.audio-dock .sound-toggle::before { content: ""; width: 4px; height: 4px; background: #ff544c; box-shadow: 0 0 9px rgba(255, 55, 48, .9); }
+.audio-dock .sound-toggle[aria-pressed="false"]::before { background: #74706e; box-shadow: none; }
+.audio-dock__slider { --volume-fill: 80%; flex: 1 1 auto; min-width: 0; height: 24px; margin: 0; appearance: none; -webkit-appearance: none; background: transparent; cursor: pointer; }
+.audio-dock__slider::-webkit-slider-runnable-track { height: 3px; background: linear-gradient(90deg, #ff544c var(--volume-fill), rgba(235, 233, 230, .38) var(--volume-fill)); }
+.audio-dock__slider::-webkit-slider-thumb { width: 8px; height: 17px; margin-top: -7px; appearance: none; -webkit-appearance: none; border: 1px solid #ffaea8; border-radius: 0; background: var(--red); box-shadow: 0 0 0 2px rgba(228, 58, 54, .18), 0 0 10px rgba(255, 55, 48, .48); }
+.audio-dock__slider::-moz-range-track { height: 3px; background: rgba(235, 233, 230, .38); }
+.audio-dock__slider::-moz-range-progress { height: 3px; background: #ff544c; }
+.audio-dock__slider::-moz-range-thumb { width: 8px; height: 17px; border: 1px solid #ffaea8; border-radius: 0; background: var(--red); box-shadow: 0 0 0 2px rgba(228, 58, 54, .18), 0 0 10px rgba(255, 55, 48, .48); }
+.audio-dock__slider:focus-visible { outline: 1px solid var(--white); outline-offset: 2px; }
+.audio-dock__value { flex: 0 0 29px; color: #ff8179; text-align: right; font: 500 9px/1 var(--mono); letter-spacing: .04em; }
 
 .intro__eyebrow {
   margin: 0 0 20px;
@@ -198,7 +234,6 @@ body:not(.is-open) .scene-layer.is-active { transform: scale(1.065); }
 .intro__bottomline { position: absolute; bottom: 34px; width: 76px; height: 1px; background: var(--red); opacity: .85; }
 
 body.is-opening .intro__content { animation: intro-out .45s ease forwards; }
-body.is-opening .sound-toggle--intro { opacity: 0; pointer-events: none; }
 body.is-opening .gate--left { animation: gate-left 2.7s cubic-bezier(.18,.74,.29,1) forwards; }
 body.is-opening .gate--right { animation: gate-right 2.7s cubic-bezier(.18,.74,.29,1) forwards; }
 body.is-opening .gate-seam { animation: seam-flare .85s ease-out forwards; }
@@ -279,6 +314,7 @@ body.is-finale .experience { opacity: 0; pointer-events: none; transform: scale(
 .topbar__rule { flex: 1; height: 1px; background: var(--line); }
 .topbar__chapter { white-space: nowrap; font: 400 10px/1 var(--mono); letter-spacing: .22em; }
 .topbar__chapter span { color: var(--red); }
+.topbar__chapter .topbar__chapter-prefix { color: var(--white); }
 
 .opener-frame {
   position: absolute;
@@ -490,6 +526,10 @@ body.is-finale .experience { opacity: 0; pointer-events: none; transform: scale(
 .hud-corner--right { right: 24px; top: 82px; border-right: 1px solid var(--red); border-top: 1px solid var(--red); }
 
 @media (max-width: 850px) {
+  .audio-dock { top: 9px; right: 140px; width: 174px; min-height: 44px; }
+  .audio-dock .sound-toggle { min-height: 32px; }
+  .audio-dock__slider { height: 34px; }
+  body:not(.is-open) .audio-dock, body.is-finale .audio-dock { right: 20px; }
   .topbar { height: 62px; padding: 0 22px; gap: 14px; }
   .topbar__brand { gap: 10px; }
   .topbar__chapter { font-size: 9px; letter-spacing: .08em; }
@@ -523,8 +563,14 @@ body.is-finale .experience { opacity: 0; pointer-events: none; transform: scale(
   .briefing-prompt__meta { font-size: 8px; letter-spacing: .15em; }
   .briefing-prompt__title { font-size: clamp(3.55rem, 17vw, 5.7rem); }
   .outline-button.briefing-prompt__button { width: 226px; margin-top: 31px; }
-  .sound-toggle--intro { top: 21px; right: 21px; }
-  .sound-toggle--hud { padding: 6px 5px; font-size: 8px; letter-spacing: .02em; }
+  .audio-dock { right: 94px; width: 135px; gap: 5px; padding: 4px 7px; }
+  body:not(.is-open) .audio-dock, body.is-finale .audio-dock { right: 20px; width: 185px; }
+  .audio-dock__prefix, .audio-dock__value { display: none; }
+  body:not(.is-open) .audio-dock__prefix, body.is-finale .audio-dock__prefix,
+  body:not(.is-open) .audio-dock__value, body.is-finale .audio-dock__value { display: inline; }
+  .topbar__brand-name { display: none; }
+  .topbar__brand::after { content: "PR"; }
+  .topbar__chapter-prefix { display: none; }
   .opener-frame__title { font-size: clamp(4.1rem, 18vw, 6.7rem); margin: 24px 0; }
   .opener-frame__eyebrow { font-size: 8px; letter-spacing: .1em; }
   .opener-frame__eyebrow::before, .opener-frame__eyebrow::after { padding: 0 5px; }

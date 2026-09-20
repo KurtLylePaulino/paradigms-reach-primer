@@ -25,12 +25,18 @@
       <div id="scene-b" class="scene-layer" aria-hidden="true"></div>
       <div class="skyline-shade" aria-hidden="true"></div>
 
+      <div id="audio-dock" class="audio-dock" role="group" aria-label="Audio controls">
+        <button id="audio-toggle" class="sound-toggle" type="button" aria-label="Mute all audio" aria-pressed="true"><span class="audio-dock__prefix">AUDIO </span><span id="audio-state">ON</span></button>
+        <label class="sr-only" for="volume-slider">Volume</label>
+        <input id="volume-slider" class="audio-dock__slider" type="range" min="0" max="100" step="1" value="80" />
+        <output id="volume-value" class="audio-dock__value" for="volume-slider">80%</output>
+      </div>
+
       <main id="experience" class="experience is-opener" hidden>
         <header class="topbar">
-          <div class="topbar__brand"><span class="topbar__mark"></span> PARADIGMS REACH</div>
+          <div class="topbar__brand"><span class="topbar__mark"></span><span class="topbar__brand-name">PARADIGMS REACH</span></div>
           <span class="topbar__rule" aria-hidden="true"></span>
-          <button id="audio-toggle-hud" class="sound-toggle sound-toggle--hud" type="button" aria-label="Mute all audio" aria-pressed="true">AUDIO ON</button>
-          <div class="topbar__chapter">CHAPTER <span id="header-current">01</span> / 09</div>
+          <div class="topbar__chapter"><span class="topbar__chapter-prefix">CHAPTER </span><span id="header-current">01</span> / 09</div>
         </header>
 
         <section id="opener-frame" class="opener-frame" aria-labelledby="opener-title" tabindex="-1">
@@ -88,7 +94,6 @@
         <div class="gate gate--left" aria-hidden="true"></div>
         <div class="gate gate--right" aria-hidden="true"></div>
         <div class="gate-seam" aria-hidden="true"></div>
-        <button id="audio-toggle-intro" class="sound-toggle sound-toggle--intro" type="button" aria-label="Mute all audio" aria-pressed="true">AUDIO ON</button>
         <div class="briefing-prompt">
           <p class="briefing-prompt__meta">GENESEED / ACCESS REQUEST</p>
           <h1 class="briefing-prompt__title">INITIATE<br>GENESEED<br>BRIEFING?</h1>

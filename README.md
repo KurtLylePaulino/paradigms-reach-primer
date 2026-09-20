@@ -24,7 +24,7 @@ Publish the `main` branch from the repository root. The site uses relative paths
 - **NEXT** after Chapter 09 clears the HUD for a final campaign invitation. **REPEAT THE BRIEFING** returns to the first access prompt.
 - **PREVIOUS**, the numbered rail, and Left/Right arrows navigate unlocked entries. The rail unlocks in order.
 - On small screens, field notes become a horizontal strip above the scrollable reading pane.
-- The **AUDIO ON/OFF** control mutes all cues and music. Hover and navigation use trimmed variations of the supplied button recording. The first click unlocks audio as required by browsers. See [AUDIO.md](AUDIO.md) for exact source segments and levels.
+- Once audio starts, a persistent **AUDIO ON/OFF** control and volume slider remain available through the briefing, chapters, and closing screen. The default is 80% of the original levels. Hover and navigation use trimmed variations of the supplied button recording. The first click unlocks audio as required by browsers. See [AUDIO.md](AUDIO.md) for exact source segments and levels.
 - Reduced-motion preference skips the typing delay and panel animations.
 
 ## Content

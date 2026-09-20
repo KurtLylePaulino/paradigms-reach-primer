@@ -15,6 +15,13 @@ const out = join(process.cwd(), "qa");
 mkdirSync(out, { recursive: true });
 const url = process.env.PRIMER_URL || pathToFileURL(join(process.cwd(), "index.html")).href;
 
+async function setVolume(page, value) {
+  await page.locator("#volume-slider").evaluate((input, nextValue) => {
+    input.value = String(nextValue);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  }, value);
+}
+
 async function inspectPage(name, viewport) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
   const errors = [];
@@ -22,9 +29,12 @@ async function inspectPage(name, viewport) {
   await page.goto(url);
   await page.waitForTimeout(900);
   assert.equal(await page.locator(".briefing-prompt").isVisible(), true);
+  assert.equal(await page.locator("#audio-dock").isVisible(), false);
   await page.screenshot({ path: join(out, `${name}-briefing.png`) });
   await page.getByRole("button", { name: "CLICK TO INITIATE" }).click();
   await page.waitForTimeout(600);
+  assert.equal(await page.locator("#audio-dock").isVisible(), true);
+  assert.equal(await page.locator("#volume-slider").inputValue(), "80");
   assert.equal(await page.evaluate(() => media.interfaceLoop.paused), false);
   assert.equal(await page.evaluate(() => media.typing.paused), false);
   await page.waitForFunction(() => !document.getElementById("enter-button").disabled);
@@ -32,12 +42,13 @@ async function inspectPage(name, viewport) {
   assert.equal(await page.evaluate(() => media.typing.paused), true);
   assert.ok((await page.evaluate(() => media.interfaceLoop.duration)) <= 4.01);
   await page.waitForTimeout(550);
+  assert.ok(await page.evaluate(() => Math.abs(media.interfaceLoop.volume - .096) < .002));
   await page.screenshot({ path: join(out, `${name}-intro.png`) });
-  await page.locator("#audio-toggle-intro").click();
-  assert.equal(await page.locator("#audio-toggle-intro").getAttribute("aria-pressed"), "false");
+  await page.locator("#audio-toggle").click();
+  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "false");
   assert.equal(await page.evaluate(() => media.interfaceLoop.muted), true);
-  await page.locator("#audio-toggle-intro").click();
-  assert.equal(await page.locator("#audio-toggle-intro").getAttribute("aria-pressed"), "true");
+  await page.locator("#audio-toggle").click();
+  assert.equal(await page.locator("#audio-toggle").getAttribute("aria-pressed"), "true");
   await page.getByRole("button", { name: "CLICK TO CONTINUE" }).click();
   await page.waitForTimeout(250);
   assert.equal(await page.evaluate(() => media.door.paused), false, "Door file should play");
@@ -45,6 +56,7 @@ async function inspectPage(name, viewport) {
   await page.waitForFunction(() => media.music.volume > 0 && !media.music.paused);
   assert.equal(await page.locator("#opener-title").innerText(), "THE WORLD\nIS ENDING.");
   assert.equal(await page.locator(".experience.is-opener").count(), 1);
+  assert.equal(await page.locator("#audio-dock").isVisible(), true);
   assert.equal(await page.evaluate(() => media.music.paused), false, "Music should play with the opener");
   assert.ok(await page.evaluate(() => media.music.volume > 0), "Music should be audible at the opener");
   await page.waitForFunction(() => media.music.readyState >= 2 && media.music.error === null);
@@ -62,6 +74,19 @@ async function inspectPage(name, viewport) {
   await page.waitForTimeout(1150);
   assert.equal(await page.evaluate(() => media.interfaceLoop.paused), true, "Interface loop should stop in the primer");
   assert.equal(await page.locator(".experience.is-chapter-entering").count(), 0);
+  await page.waitForFunction(() => Math.abs(media.music.volume - .136) < .002);
+  await setVolume(page, 40);
+  assert.ok(await page.evaluate(() => Math.abs(media.music.volume - .068) < .002));
+  assert.equal(await page.locator("#volume-slider").evaluate(el => el.style.getPropertyValue("--volume-fill")), "40%");
+  await setVolume(page, 100);
+  assert.ok(await page.evaluate(() => Math.abs(media.music.volume - .17) < .002));
+  await setVolume(page, 80);
+  assert.equal(await page.locator("#volume-value").textContent(), "80%");
+  await page.locator("#volume-slider").focus();
+  await page.keyboard.press("ArrowLeft");
+  assert.equal(await page.locator("#volume-slider").inputValue(), "79");
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.locator("#volume-slider").inputValue(), "80");
   await page.screenshot({ path: join(out, `${name}-chapter-intro.png`) });
   const titles = ["A world on the brink."];
   const images = [await page.locator(".scene-layer.is-active").evaluate(el => getComputedStyle(el).backgroundImage)];
@@ -106,12 +131,15 @@ async function inspectPage(name, viewport) {
   await page.locator("#finale.is-visible").waitFor();
   await page.waitForFunction(() => document.getElementById("experience").hidden);
   assert.equal(await page.locator("#finale-title").innerText(), "YOUR CAMPAIGN\nBEGINS.");
+  assert.equal(await page.locator("#audio-dock").isVisible(), true);
   assert.equal(await page.locator(".finale__copy").textContent(), "Paradigms Reach still stands. The world still breaks. Will you be the reason it survives?");
   for (const selector of [".topbar", ".chapter-rail", ".detail-cards", ".reading-pane", ".hud-corner"]) {
     assert.equal(await page.locator(selector).first().isVisible(), false, `${selector} should disappear at the finale`);
   }
   assert.equal(await page.evaluate(() => media.music.paused), false);
   assert.ok(await page.evaluate(() => media.music.currentTime) > musicBeforeFinale);
+  await setVolume(page, 20);
+  assert.ok(await page.evaluate(() => Math.abs(media.music.volume - .034) < .002));
   assert.equal(await page.locator("#finale-title").evaluate(el => el.scrollWidth <= el.clientWidth + 2), true, "Finale title should fit");
   await page.screenshot({ path: join(out, `${name}-finale.png`) });
   await Promise.all([
@@ -121,6 +149,7 @@ async function inspectPage(name, viewport) {
   assert.equal(await page.locator(".briefing-prompt").isVisible(), true);
   assert.equal(await page.locator("#experience").isVisible(), false);
   assert.equal(await page.locator("#finale").isVisible(), false);
+  assert.equal(await page.locator("#audio-dock").isVisible(), false);
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ name, titles, uniqueImages: new Set(images).size, dimensions, errors }));
   await page.close();

@@ -138,6 +138,7 @@ let currentChapter = 0, maxUnlockedChapter = 0, typingTimer, typed = false, open
 let activeScene = 0, transitionTimer;
 let briefingStarted = false, soundEnabled = true, lastHoverSound = 0;
 let audioPhase = "prelude", lastClickIndex = -1;
+let masterVolume = .8;
 const soundtrackName = "Extraction Action (Cyberpunk 2077 Soundtrack).mp3";
 const media = {
   interfaceLoop: new Audio("assets/audio/interface-loop.wav"),
@@ -148,11 +149,22 @@ const media = {
   music: new Audio("assets/" + encodeURIComponent(soundtrackName))
 };
 const allMedia = [media.interfaceLoop, media.typing, media.door, media.hover, ...media.clicks, media.music];
-allMedia.forEach(element => { element.preload = "auto"; });
+const baseVolumes = new WeakMap();
+allMedia.forEach(element => {
+  element.preload = "auto";
+  baseVolumes.set(element, 1);
+  element.volume = masterVolume;
+});
 media.interfaceLoop.loop = true;
 media.music.loop = true;
 media.music.preload = "none";
 const fades = new WeakMap();
+
+function setMediaVolume(element, volume) {
+  const base = Math.max(0, Math.min(1, volume));
+  baseVolumes.set(element, base);
+  element.volume = base * masterVolume;
+}
 
 function safePlay(element) {
   element.muted = !soundEnabled;
@@ -162,18 +174,18 @@ function safePlay(element) {
 function playClip(element, volume) {
   element.pause();
   element.currentTime = 0;
-  element.volume = volume;
+  setMediaVolume(element, volume);
   safePlay(element);
 }
 
 function fadeAudio(element, target, duration, stopAtEnd = false) {
   const previous = fades.get(element);
   if (previous) cancelAnimationFrame(previous);
-  const initial = element.volume;
+  const initial = baseVolumes.get(element);
   const started = performance.now();
   function step(now) {
     const progress = Math.max(0, Math.min(1, (now - started) / duration));
-    element.volume = initial + (target - initial) * progress;
+    setMediaVolume(element, initial + (target - initial) * progress);
     if (progress < 1) fades.set(element, requestAnimationFrame(step));
     else {
       fades.delete(element);
@@ -190,7 +202,7 @@ function startInterfaceLoop() {
   const pendingFade = fades.get(media.interfaceLoop);
   if (pendingFade) cancelAnimationFrame(pendingFade);
   fades.delete(media.interfaceLoop);
-  media.interfaceLoop.volume = .12;
+  setMediaVolume(media.interfaceLoop, .12);
   if (media.interfaceLoop.paused) {
     media.interfaceLoop.currentTime = 0;
     safePlay(media.interfaceLoop);
@@ -221,16 +233,15 @@ function playUiSound(kind) {
 }
 
 function playDoorSound() {
-  media.interfaceLoop.volume = .055;
+  setMediaVolume(media.interfaceLoop, .055);
   playClip(media.door, .68);
 }
 
 function syncSoundButtons() {
-  for (const button of [$("audio-toggle-intro"), $("audio-toggle-hud")]) {
-    button.textContent = soundEnabled ? "AUDIO ON" : "AUDIO OFF";
-    button.setAttribute("aria-pressed", String(soundEnabled));
-    button.setAttribute("aria-label", soundEnabled ? "Mute all audio" : "Enable all audio");
-  }
+  const button = $("audio-toggle");
+  $("audio-state").textContent = soundEnabled ? "ON" : "OFF";
+  button.setAttribute("aria-pressed", String(soundEnabled));
+  button.setAttribute("aria-label", soundEnabled ? "Mute all audio" : "Enable all audio");
 }
 
 function toggleSound() {
@@ -242,6 +253,13 @@ function toggleSound() {
     else if (briefingStarted && audioPhase !== "primer" && media.interfaceLoop.paused) startInterfaceLoop();
     playUiSound("start");
   }
+}
+
+function changeMasterVolume(event) {
+  masterVolume = Number(event.target.value) / 100;
+  event.target.style.setProperty("--volume-fill", `${Math.round(masterVolume * 100)}%`);
+  allMedia.forEach(element => setMediaVolume(element, baseVolumes.get(element)));
+  $("volume-value").textContent = `${Math.round(masterVolume * 100)}%`;
 }
 
 function addDetailList(items, compact = false) {
@@ -376,7 +394,7 @@ function finishTyping() {
   clearInterval(typingTimer);
   media.typing.pause();
   media.typing.currentTime = 0;
-  if (audioPhase === "briefing") media.interfaceLoop.volume = .12;
+  if (audioPhase === "briefing") setMediaVolume(media.interfaceLoop, .12);
   titleText.textContent = "PARADIGMS REACH";
   intro.classList.add("is-typed");
   enterButton.disabled = false;
@@ -386,7 +404,7 @@ function startTyping() {
   if (reducedMotion.matches) return finishTyping();
   const title = "PARADIGMS REACH";
   let position = 0;
-  media.interfaceLoop.volume = .07;
+  setMediaVolume(media.interfaceLoop, .07);
   playClip(media.typing, .24);
   typingTimer = setInterval(() => {
     titleText.textContent = title.slice(0, ++position);
@@ -397,6 +415,7 @@ function beginBriefing() {
   if (briefingStarted) return;
   briefingStarted = true;
   audioPhase = "briefing";
+  document.body.classList.add("has-audio");
   intro.classList.add("is-briefing-started");
   startInterfaceLoop();
   playUiSound("start");
@@ -414,7 +433,7 @@ function openGate() {
   playDoorSound();
   // Start decoding from the user gesture, then bring the music up with the reveal.
   media.music.currentTime = 0;
-  media.music.volume = 0;
+  setMediaVolume(media.music, 0);
   safePlay(media.music);
   experience.hidden = false;
   document.body.classList.add("is-opening");
@@ -464,9 +483,8 @@ $("repeat-briefing").addEventListener("click", () => {
   finale.classList.remove("is-visible");
   setTimeout(() => window.location.reload(), reducedMotion.matches ? 0 : 350);
 });
-for (const button of [$("audio-toggle-intro"), $("audio-toggle-hud")]) {
-  button.addEventListener("click", toggleSound);
-}
+$("audio-toggle").addEventListener("click", toggleSound);
+$("volume-slider").addEventListener("input", changeMasterVolume);
 document.addEventListener("pointerover", event => {
   const button = event.target.closest?.("button");
   if (button && !button.disabled && !button.contains(event.relatedTarget)) playUiSound("hover");
@@ -475,6 +493,7 @@ document.addEventListener("focusin", event => {
   if (event.target instanceof HTMLButtonElement && !event.target.disabled) playUiSound("hover");
 });
 document.addEventListener("keydown", event => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement || event.target?.isContentEditable) return;
   if (!open && briefingStarted && !typed && (event.key === "Enter" || event.key === " ")) {
     event.preventDefault();
     finishTyping();
