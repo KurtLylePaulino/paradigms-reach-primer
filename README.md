@@ -18,9 +18,10 @@ Publish the `main` branch from the repository root. The site uses relative paths
 
 ## Interaction
 
-- **CLICK TO INITIATE** starts the four-second interface bed and title typing. **CLICK TO CONTINUE** opens the gate with the trimmed door recording. The skyline reveal fades from the interface bed into the supplied music, which continues through **ENTER THE PRIMER** and **BEGIN AGAIN**.
+- **CLICK TO INITIATE** starts the four-second interface bed and title typing. **CLICK TO CONTINUE** opens the gate with the trimmed door recording. The skyline reveal fades from the interface bed into the supplied music, which continues through the primer and closing screen.
 - Each **CONTINUE** crossfades to a unique background and plays a one-shot staggered expansion of three large, fully transparent text HUD panels. The right reading segment has a darker transparent tint.
 - Chapter 03 shows ten smaller HUD panels, one for every named Reach district in the primer.
+- **NEXT** after Chapter 09 clears the HUD for a final campaign invitation. **REPEAT THE BRIEFING** returns to the first access prompt.
 - **PREVIOUS**, the numbered rail, and Left/Right arrows navigate unlocked entries. The rail unlocks in order.
 - On small screens, field notes become a horizontal strip above the scrollable reading pane.
 - The **AUDIO ON/OFF** control mutes all cues and music. Hover and navigation use trimmed variations of the supplied button recording. The first click unlocks audio as required by browsers. See [AUDIO.md](AUDIO.md) for exact source segments and levels.
@@ -28,7 +29,7 @@ Publish the `main` branch from the repository root. The site uses relative paths
 
 ## Content
 
-The sequence is Opening → Intro → The Reach → Districts → Powers → Your Role → Protectors → Threats → Last Light. It expands the player-facing summary from the 52-page source primer. The primer's images informed the worldbuilding; new generated chapter scenes keep the visual treatment consistent. [CONTENT_NOTES.md](CONTENT_NOTES.md) maps each entry to the source and records the caution around optional history, corporate rumors, and exact character mechanics. The visible title uses the user's requested spelling, **Paradigms Reach**.
+The sequence is Opening → Intro → The Reach → Districts → Powers → Your Role → Protectors → Threats → Last Light → Campaign invitation. It expands the player-facing summary from the 52-page source primer. The primer's images informed the worldbuilding; new generated chapter scenes keep the visual treatment consistent. [CONTENT_NOTES.md](CONTENT_NOTES.md) maps each entry to the source and records the caution around optional history, corporate rumors, and exact character mechanics. The visible title uses the user's requested spelling, **Paradigms Reach**.
 
 ## Verification
 
@@ -37,4 +38,4 @@ node --check app.js
 node preview-check.mjs
 ```
 
-`preview-check.mjs` exercises the two-click entrance, supplied typing and door playback, music start, all eight content entries, transparent panels, Chapter 03's ten districts, one-shot note entrance, distinct scenes, mobile overflow, and reduced motion. Screenshots are written to `qa/`.
+`preview-check.mjs` exercises the two-click entrance, supplied typing and door playback, music start, all eight content entries, transparent panels, Chapter 03's ten districts, one-shot note entrance, distinct scenes, the closing screen and repeat flow, mobile overflow, and reduced motion. Screenshots are written to `qa/`.

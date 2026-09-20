@@ -83,14 +83,6 @@ async function inspectPage(name, viewport) {
     }
   }
   assert.equal(new Set(images).size, 8, "Each entry after opener needs its own scene");
-  const musicBeforeReturn = await page.evaluate(() => media.music.currentTime);
-  await page.getByRole("button", { name: "BEGIN AGAIN" }).click();
-  await page.waitForTimeout(650);
-  assert.equal(await page.locator(".experience.is-opener").count(), 1);
-  assert.equal(await page.evaluate(() => media.music.paused), false);
-  assert.ok(await page.evaluate(() => media.music.currentTime) > musicBeforeReturn);
-  assert.equal(await page.evaluate(() => media.interfaceLoop.paused), true);
-  await page.getByRole("button", { name: "ENTER THE PRIMER" }).click();
   await page.getByRole("button", { name: "Chapter 3: The Reach" }).click();
   assert.deepEqual(await page.locator(".detail-card--small h2").allTextContents(), [
     "Aegis Spire", "Gearheart Quarter", "Undergrid", "High Expanse", "Riftfront",
@@ -107,6 +99,28 @@ async function inspectPage(name, viewport) {
     scrollHeight: document.documentElement.scrollHeight
   }));
   assert.equal(dimensions.scrollWidth, dimensions.width);
+  await page.getByRole("button", { name: "Chapter 9: Last Light" }).click();
+  assert.equal(await page.locator("#next-label").textContent(), "NEXT");
+  const musicBeforeFinale = await page.evaluate(() => media.music.currentTime);
+  await page.getByRole("button", { name: "NEXT" }).click();
+  await page.locator("#finale.is-visible").waitFor();
+  await page.waitForFunction(() => document.getElementById("experience").hidden);
+  assert.equal(await page.locator("#finale-title").innerText(), "YOUR CAMPAIGN\nBEGINS.");
+  assert.equal(await page.locator(".finale__copy").textContent(), "Paradigms Reach still stands. The world still breaks. Will you be the reason it survives?");
+  for (const selector of [".topbar", ".chapter-rail", ".detail-cards", ".reading-pane", ".hud-corner"]) {
+    assert.equal(await page.locator(selector).first().isVisible(), false, `${selector} should disappear at the finale`);
+  }
+  assert.equal(await page.evaluate(() => media.music.paused), false);
+  assert.ok(await page.evaluate(() => media.music.currentTime) > musicBeforeFinale);
+  assert.equal(await page.locator("#finale-title").evaluate(el => el.scrollWidth <= el.clientWidth + 2), true, "Finale title should fit");
+  await page.screenshot({ path: join(out, `${name}-finale.png`) });
+  await Promise.all([
+    page.waitForEvent("load"),
+    page.getByRole("button", { name: "REPEAT THE BRIEFING" }).click()
+  ]);
+  assert.equal(await page.locator(".briefing-prompt").isVisible(), true);
+  assert.equal(await page.locator("#experience").isVisible(), false);
+  assert.equal(await page.locator("#finale").isVisible(), false);
   assert.deepEqual(errors, []);
   console.log(JSON.stringify({ name, titles, uniqueImages: new Set(images).size, dimensions, errors }));
   await page.close();

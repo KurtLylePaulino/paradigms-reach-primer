@@ -124,6 +124,7 @@ const $ = id => document.getElementById(id);
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const intro = $("intro"), titleText = $("typed-title"), enterButton = $("enter-button");
 const experience = $("experience"), openerFrame = $("opener-frame");
+const finale = $("finale"), finaleTitle = $("finale-title");
 const chapterTitle = $("chapter-title"), chapterKicker = $("chapter-kicker");
 const chapterLead = $("chapter-lead"), chapterDetail = $("chapter-detail");
 const chapterStatus = $("chapter-status"), chapterRail = $("chapter-rail-items");
@@ -339,7 +340,7 @@ function renderChapter(index, moveFocus = false) {
   } else detailCards.replaceChildren();
   headerCurrent.textContent = String(index + 1).padStart(2, "0");
   previousButton.disabled = index === 0;
-  nextLabel.textContent = index === chapters.length - 1 ? "BEGIN AGAIN" : "CONTINUE";
+  nextLabel.textContent = index === chapters.length - 1 ? "NEXT" : "CONTINUE";
   [...chapterRail.children].forEach((button, railIndex) => {
     button.disabled = railIndex > maxUnlockedChapter;
     if (railIndex === index) button.setAttribute("aria-current", "step");
@@ -428,9 +429,26 @@ function openGate() {
 }
 function goNext() {
   playUiSound("next");
-  if (currentChapter === chapters.length - 1) return renderChapter(0, true);
+  if (currentChapter === chapters.length - 1) return showFinale();
   maxUnlockedChapter = Math.max(maxUnlockedChapter, currentChapter + 1);
   renderChapter(currentChapter + 1, true);
+}
+function showFinale() {
+  if (document.body.classList.contains("is-finale")) return;
+  nextButton.disabled = true;
+  clearTimeout(transitionTimer);
+  experience.classList.remove("is-chapter-entering");
+  transitionScene(chapters[0].image);
+  document.body.classList.add("is-finale");
+  document.title = "Your Campaign Begins — Paradigms Reach";
+  setTimeout(() => {
+    experience.hidden = true;
+    finale.hidden = false;
+    requestAnimationFrame(() => {
+      finale.classList.add("is-visible");
+      finaleTitle.focus({ preventScroll: true });
+    });
+  }, reducedMotion.matches ? 0 : 740);
 }
 document.querySelector(".intro__content").setAttribute("aria-hidden", "true");
 $("initiate-button").addEventListener("click", beginBriefing);
@@ -441,6 +459,11 @@ previousButton.addEventListener("click", () => {
   renderChapter(currentChapter - 1, true);
 });
 nextButton.addEventListener("click", goNext);
+$("repeat-briefing").addEventListener("click", () => {
+  playUiSound("next");
+  finale.classList.remove("is-visible");
+  setTimeout(() => window.location.reload(), reducedMotion.matches ? 0 : 350);
+});
 for (const button of [$("audio-toggle-intro"), $("audio-toggle-hud")]) {
   button.addEventListener("click", toggleSound);
 }
@@ -456,7 +479,7 @@ document.addEventListener("keydown", event => {
     event.preventDefault();
     finishTyping();
     enterButton.focus();
-  } else if (open && document.body.classList.contains("is-open")) {
+  } else if (open && document.body.classList.contains("is-open") && !document.body.classList.contains("is-finale")) {
     if (event.key === "ArrowRight" && currentChapter < chapters.length - 1) {
       event.preventDefault();
       goNext();

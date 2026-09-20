@@ -223,8 +223,41 @@ body.is-opening .intro__bottomline { opacity: 0; }
   100% { opacity: 0; transform: translateX(-50%) scaleX(95); }
 }
 
-.experience { position: relative; min-height: 100svh; opacity: 0; pointer-events: none; transition: opacity .75s ease; }
+.experience { position: relative; min-height: 100svh; opacity: 0; pointer-events: none; transition: opacity .7s ease, transform .7s ease; }
 body.is-open .experience { opacity: 1; pointer-events: auto; }
+body.is-finale .experience { opacity: 0; pointer-events: none; transform: scale(1.02); }
+
+.finale {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 40px 22px;
+  overflow: auto;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(28, 3, 5, .37), rgba(3, 4, 6, .80) 75%), linear-gradient(0deg, rgba(2, 3, 5, .6), transparent 36%);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.finale.is-visible { opacity: 1; transform: translateY(0); }
+.finale__content { width: min(100%, 1100px); text-shadow: 0 8px 32px #000; }
+.finale__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: #ff3b35;
+  font: 700 clamp(5rem, 8vw, 9rem)/.78 var(--display);
+  letter-spacing: .003em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  text-shadow: 0 2px 0 #330607, 0 0 25px rgba(255, 32, 24, .43), 0 15px 50px #000;
+  -webkit-text-stroke: .5px #ff7770;
+}
+.finale__title span:last-child { margin-top: .14em; }
+.finale__copy { max-width: 35ch; margin: 30px auto 0; color: #f4eae6; font: 400 clamp(16px, 1.65vw, 23px)/1.4 var(--body); }
+.outline-button.finale__button { width: 266px; margin: 38px auto 0; background: rgba(5, 6, 8, .82); }
 
 .topbar {
   position: absolute;
@@ -497,6 +530,9 @@ body.is-open .experience { opacity: 1; pointer-events: auto; }
   .opener-frame__eyebrow::before, .opener-frame__eyebrow::after { padding: 0 5px; }
   .opener-frame__copy { max-width: 24ch; font-size: 15px; }
   .opener-frame__button { margin-top: 28px; }
+  .finale__title { font-size: clamp(4.3rem, 17vw, 7rem); }
+  .finale__copy { max-width: 26ch; margin-top: 25px; font-size: 16px; }
+  .outline-button.finale__button { width: 248px; margin-top: 30px; }
   .enter-button { margin-top: 30px; }
   .topbar__brand { font-size: 11px; letter-spacing: .14em; }
   .topbar__rule { display: none; }
