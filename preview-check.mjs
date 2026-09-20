@@ -41,7 +41,8 @@ async function inspectPage(name, viewport) {
   await page.getByRole("button", { name: "CLICK TO CONTINUE" }).click();
   await page.waitForTimeout(250);
   assert.equal(await page.evaluate(() => media.door.paused), false, "Door file should play");
-  await page.waitForTimeout(2750);
+  await page.locator("body.is-open").waitFor();
+  await page.waitForFunction(() => media.music.volume > 0 && !media.music.paused);
   assert.equal(await page.locator("#opener-title").innerText(), "THE WORLD\nIS ENDING.");
   assert.equal(await page.locator(".experience.is-opener").count(), 1);
   assert.equal(await page.evaluate(() => media.music.paused), false, "Music should play with the opener");

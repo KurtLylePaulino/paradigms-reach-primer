@@ -171,7 +171,7 @@ function fadeAudio(element, target, duration, stopAtEnd = false) {
   const initial = element.volume;
   const started = performance.now();
   function step(now) {
-    const progress = Math.min(1, (now - started) / duration);
+    const progress = Math.max(0, Math.min(1, (now - started) / duration));
     element.volume = initial + (target - initial) * progress;
     if (progress < 1) fades.set(element, requestAnimationFrame(step));
     else {
