@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090a0c" />
+    <meta
+      name="description"
+      content="Enter Paradigms Reach: a guided campaign primer for a world where machine and magic hold the last bastion against the end."
+    />
+    <title>Paradigms Reach — Campaign Primer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" href="assets/reach-skyline.webp" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <div id="scene-a" class="scene-layer is-active" aria-hidden="true"></div>
+      <div id="scene-b" class="scene-layer" aria-hidden="true"></div>
+      <div class="skyline-shade" aria-hidden="true"></div>
+
+      <main id="experience" class="experience is-opener" hidden>
+        <header class="topbar">
+          <div class="topbar__brand"><span class="topbar__mark"></span> PARADIGMS REACH</div>
+          <span class="topbar__rule" aria-hidden="true"></span>
+          <button id="audio-toggle-hud" class="sound-toggle sound-toggle--hud" type="button" aria-label="Mute all audio" aria-pressed="true">AUDIO ON</button>
+          <div class="topbar__chapter">CHAPTER <span id="header-current">01</span> / 09</div>
+        </header>
+
+        <section id="opener-frame" class="opener-frame" aria-labelledby="opener-title" tabindex="-1">
+          <div class="opener-frame__scan" aria-hidden="true"></div>
+          <p class="opener-frame__eyebrow">TRANSMISSION / 001 — THE LAST BASTION</p>
+          <h1 id="opener-title" class="opener-frame__title"><span>THE WORLD</span><span>IS ENDING.</span></h1>
+          <p class="opener-frame__copy">Reality is breaking. One civilization still refuses to fall.</p>
+          <button id="opener-next" class="outline-button opener-frame__button" type="button">
+            <span>ENTER THE PRIMER</span><span class="outline-button__arrow" aria-hidden="true">→</span>
+          </button>
+          <span class="opener-frame__coordinates" aria-hidden="true">REACH // ACTIVE SIGNAL</span>
+        </section>
+
+        <nav class="chapter-rail" aria-label="Primer chapters">
+          <div class="chapter-rail__line" aria-hidden="true"></div>
+          <div id="chapter-rail-items" class="chapter-rail__items"></div>
+        </nav>
+
+        <aside id="detail-cards" class="detail-cards" aria-label="Chapter field notes"></aside>
+
+        <section class="reading-pane" aria-labelledby="chapter-title">
+          <div class="reading-pane__inner">
+            <p id="chapter-kicker" class="reading-pane__kicker"></p>
+            <div class="reading-pane__rule" aria-hidden="true"></div>
+            <h1 id="chapter-title" class="reading-pane__title" tabindex="-1"></h1>
+            <p id="chapter-lead" class="reading-pane__lead"></p>
+            <div id="chapter-detail" class="reading-pane__detail"></div>
+          </div>
+          <div class="reading-pane__controls">
+            <button id="previous-chapter" class="text-button" type="button" aria-label="Previous chapter">
+              <span aria-hidden="true">←</span> PREVIOUS
+            </button>
+            <button id="next-chapter" class="outline-button" type="button">
+              <span id="next-label">CONTINUE</span><span class="outline-button__arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </section>
+
+        <div class="hud-corner hud-corner--left" aria-hidden="true"></div>
+        <div class="hud-corner hud-corner--right" aria-hidden="true"></div>
+        <p id="chapter-status" class="sr-only" role="status" aria-live="polite"></p>
+      </main>
+
+      <section id="intro" class="intro" aria-label="Enter Paradigms Reach">
+        <div class="gate gate--left" aria-hidden="true"></div>
+        <div class="gate gate--right" aria-hidden="true"></div>
+        <div class="gate-seam" aria-hidden="true"></div>
+        <button id="audio-toggle-intro" class="sound-toggle sound-toggle--intro" type="button" aria-label="Mute all audio" aria-pressed="true">AUDIO ON</button>
+        <div class="briefing-prompt">
+          <p class="briefing-prompt__meta">GENESEED / ACCESS REQUEST</p>
+          <h1 class="briefing-prompt__title">INITIATE<br>GENESEED<br>BRIEFING?</h1>
+          <button id="initiate-button" class="outline-button briefing-prompt__button" type="button">
+            <span>CLICK TO INITIATE</span><span class="outline-button__arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+        <div class="intro__content">
+          <p class="intro__eyebrow">A CAMPAIGN PRIMER</p>
+          <h1 class="intro__title" aria-label="Paradigms Reach">
+            <span id="typed-title" aria-hidden="true"></span><span class="intro__cursor" aria-hidden="true"></span>
+          </h1>
+          <button id="enter-button" class="enter-button" type="button" disabled>
+            <span>CLICK TO CONTINUE</span><span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <div class="intro__bottomline" aria-hidden="true"></div>
+      </section>
+    </div>
+  </body>
+</html>
